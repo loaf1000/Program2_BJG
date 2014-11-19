@@ -445,21 +445,50 @@ namespace Program2 {
 		};
 
 		String^ username;
+		String^ firstName;
 
 		array<PictureBox^>^ playerCardPictureBoxes = gcnew array<PictureBox^>(10);
 		array<Label^>^ playerCardLabels = gcnew array<Label^>(10);
 		array<Cards>^ cardsDealtToPlayer = gcnew array<Cards>(10);
+		array<Point>^ playerCardPositions; // card positions for 5 cards (50, 112), (180, 112), (310, 112), (108, 333), (238, 333)
 
 		array<PictureBox^>^ dealerCardPictureBoxes = gcnew array<PictureBox^>(10);
 		array<Label^>^ dealerCardLabels = gcnew array<Label^>(10);
 		array<Cards>^ cardsDealtToDealer = gcnew array<Cards>(10);
+		array<Point>^ dealerCardPositions; // card positions for 5 cards (573 ,112), (703 , 112), (833, 112), (631, 333), (761, 333)
 
 		ArrayList deck;
 		ArrayList debug;
-		int playerCardTotal, dealerCardTotal, indexCards = 0;
+		int playerCardTotal = 0, dealerCardTotal = 0, playerCardsInHand = 0, dealerCardsInHand = 0, win = 0, loss = 0, tie = 0;
 
 		////////////////////////////////////////////////////////////////////
-		
+
+		bool blackJack(int cardTotal)
+		{
+			if (cardTotal == 21)
+			{
+				return true;
+			}
+			
+			else
+			{
+				return false;
+			}
+		}
+
+		bool bust(int cardTotal)
+		{
+			if (cardTotal > 21)
+			{
+				return true;
+			}
+
+			else
+			{
+				return false;
+			}
+		}
+
 		bool cardAce(Cards card)
 		{
 			switch (card)
@@ -472,6 +501,68 @@ namespace Program2 {
 				break;
 			default:
 				return false;
+			}
+		}
+
+		int changeValueAce(int index)
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
+			Windows::Forms::DialogResult buttonClicked;
+
+			////////////////////////////////////////////////////////////////////
+
+			buttonClicked = MessageBox::Show("Would you like the value of your ace to be 1? " +
+				"\nYes for 1, No for 11.",
+				"Ace 1/11",
+				MessageBoxButtons::YesNo,
+				MessageBoxIcon::Question,
+				MessageBoxDefaultButton::Button2);
+
+			if (buttonClicked == Windows::Forms::DialogResult::Yes)
+			{
+				return  1;
+				playerCardLabels[index]->Text = "Card Value: 1";
+			}
+			
+			else
+			{
+				return 11;
+			}
+				
+		}
+
+		void cleanup(int playerIndex, int dealerIndex)
+		{
+			buttonHit->Visible = false;
+			buttonStay->Visible = false;
+			buttonPlay->Visible = true;
+
+			playerCardsInHand = 0;
+			dealerCardsInHand = 0;
+
+			playerCardTotal = 0;
+			dealerCardTotal = 0;
+
+			labelPlayerTotal->Visible = false;
+			labelDealerTotal->Visible = false;
+
+			for (int i = 0; i < playerIndex; i++)
+			{
+				playerCardLabels[i]->Visible = false;
+				playerCardPictureBoxes[i]->Visible = false;
+
+				
+			}
+
+			for (int i = 0; i < dealerIndex; i++)
+			{
+				dealerCardLabels[i]->Visible = false;
+				dealerCardPictureBoxes[i]->Visible = false;
 			}
 		}
 
@@ -492,6 +583,56 @@ namespace Program2 {
 			deck.RemoveAt(0);
 
 			return deckCopy[0];
+		}
+
+		bool dealerHasAce()
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
+			bool hasAce = false;
+			int numberofAces = 0;
+
+			////////////////////////////////////////////////////////////////////
+
+			for (int i = 0; i < dealerCardsInHand; i++)
+			{
+				switch (cardsDealtToDealer[i])
+				{
+					case Cards::cA:
+					case Cards::dA:
+					case Cards::sA:
+					case Cards::hA:
+
+						numberofAces++;
+						break;
+						// no deafult required
+				}
+					
+			}
+
+			if (numberofAces > 1)
+			{
+				hasAce = true;
+			}
+
+			return hasAce;
+		}
+
+		bool dealerHit(int cardTotal)
+		{
+			if (cardTotal < 16)
+			{
+				return true;
+			}
+
+			else
+			{
+				return false;
+			}
 		}
 
 		void displayCardandValue(Cards card, int index, int cardValue, Point startingPosition,bool player)
@@ -581,17 +722,35 @@ namespace Program2 {
 
 		}
 
+		void displayCardTotal(bool player)
+		{
+			if (player)
+			{
+				labelPlayerTotal->Text = firstName + "\'s Total: " + playerCardTotal.ToString();
+				labelPlayerTotal->Visible = true;
+			}
+
+			else
+			{
+				labelDealerTotal->Text = "Dealer\'s Total: " + dealerCardTotal.ToString();
+				labelDealerTotal->Visible = true;
+			}
+		}
+
+		void displayDeck()
+		{
+			labelDescription->Text = "";
+
+			for (int i = 0; i < 52; i++)
+			{
+				labelDescription->Text += deck[i] + "  ";
+			}
+			labelDescription->Location = Point(504 - (labelDescription->Width / 2), 49);
+			deck.RemoveRange(0, deck.Count);
+		}
+
 		int getCardValue(Cards card)
 		{
-			////////////////////////////////////////////////////////////////////
-			//
-			//				DECLARE LOCAL VARIABLES/OBJECTS
-			//
-			////////////////////////////////////////////////////////////////////
-
-			Windows::Forms::DialogResult buttonClicked;
-
-			////////////////////////////////////////////////////////////////////
 			switch (card)
 			{
 			case Cards::cA:
@@ -681,6 +840,12 @@ namespace Program2 {
 			}
 		}
 
+		void initializePointArrays()
+		{
+			dealerCardPositions = gcnew array<Point> { Point(573, 112), Point(703, 112), Point(833, 112), Point(631, 333), Point(761, 333) };
+			playerCardPositions = gcnew array<Point> { Point(50, 112), Point(180, 112), Point(310, 112), Point(108, 333), Point(238, 333) };
+		}
+
 		void shuffleDeck()
 		{
 			Cards nextCard = Cards::cA;
@@ -721,28 +886,19 @@ namespace Program2 {
 			}
 		}
 
-		void displayDeck()
-		{
-			labelDescription->Text = "";
-
-			for (int i = 0; i < 52; i++)
-			{
-				labelDescription->Text += deck[i] +"  " ;
-			}
-			labelDescription->Location = Point(504 - (labelDescription->Width / 2), 49);
-			deck.RemoveRange(0, deck.Count);
-		}
-
 		private: System::Void timerDateTime_Tick(System::Object^  sender, System::EventArgs^  e) 
 	{
 				 labelDateTime->Text = DateTime::Now.ToString();
 	}
+
 		private: System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e) 
 {
+			 initializePointArrays();
 			 labelDateTime->Visible = true;
 			 pictureBoxCardAnimation1->Visible = true;
 			 pictureBoxCardAnimation2->Visible = true;
 }
+
 		private: System::Void timerCardAnimation_Tick(System::Object^  sender, System::EventArgs^  e) 
 {
 			static int upCounter = 39, downCounter = 38;
@@ -763,12 +919,22 @@ namespace Program2 {
 				downCounter = 38;
 			}
 }
+
 		private: System::Void buttonLogin_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		username = textBoxLogin->Text;
 
 		if (username->Trim() != "")
 		{
+			if (username->IndexOf(" ") > 0)
+			{
+				firstName = username->Substring(0, username->IndexOf(" "));
+			}
+
+			else
+			{
+				firstName = username;
+			}
 			buttonLogin->Visible = false;
 
 			labelDescription->Visible = false;
@@ -805,55 +971,211 @@ namespace Program2 {
 				//
 				////////////////////////////////////////////////////////////////////
 
-				array<Point>^ playerCardPositions = { Point(50, 112), Point(180, 112) }; // card positions for 5 cards (50, 112), (180, 112), (310, 112), (108, 333), (238, 333)
-				array<Point>^ dealerCardPositions = { Point(573, 112), Point(703, 112) }; // card positions for 5 cards (573 ,112), (703 , 112), (833, 112), (631, 333), (761, 333)
-			
-				Windows::Forms::DialogResult buttonClicked;
+				int playerCardValue, dealerCardValue;
 
 				////////////////////////////////////////////////////////////////////
 
 				buttonHit->Visible = true;
 				buttonStay->Visible = true;
-				indexCards = 0;
-				//buttonPlay->Visible = false;
+				buttonPlay->Visible = false;
+
+
+
 				if (deck.Count < 4)
 				{
 					shuffleDeck();
 				}
+
 				for (int i = 0; i < 2; i ++)
 				{
-					cardsDealtToPlayer[i] = dealCard(); 
+					cardsDealtToPlayer[i] = dealCard();
 					cardsDealtToDealer[i] = dealCard();
-					displayCardandValue(cardsDealtToPlayer[i], i, getCardValue(cardsDealtToPlayer[i]), playerCardPositions[i], true);
-					displayCardandValue(cardsDealtToDealer[i], i, getCardValue(cardsDealtToDealer[i]), dealerCardPositions[i], false);
-					
-					if (cardAce(cardsDealtToPlayer[i]))
-					{
-						buttonClicked = MessageBox::Show("Would you like the value of your ace to be 1? " +
-							"\nYes for 1, No for 11.",
-							"Ace 1/11",
-							MessageBoxButtons::YesNoCancel,
-							MessageBoxIcon::Question,
-							MessageBoxDefaultButton::Button2);
 
-						if (buttonClicked == Windows::Forms::DialogResult::Yes)
-						{
-							playerCardLabels[i]->Text = "Card Value: 1";
-						}
+					playerCardValue = getCardValue(cardsDealtToPlayer[i]);
+					dealerCardValue = getCardValue(cardsDealtToDealer[i]);
+
+					displayCardandValue(cardsDealtToPlayer[i], i, playerCardValue, playerCardPositions[i], true);
+					displayCardandValue(cardsDealtToDealer[i], i, dealerCardValue, dealerCardPositions[i], false);
+
+					if (dealerHasAce() && cardAce(cardsDealtToDealer[i]))
+					{
+						dealerCardValue = 1;
+						dealerCardLabels[i]->Text = "Card Value: 1";
 					}
-					indexCards++;
+
+					playerCardsInHand++;
+					dealerCardsInHand++;
+
+					playerCardTotal += playerCardValue;
+					dealerCardTotal += dealerCardValue;
 				}
 
+				
+				displayCardTotal(true);
+				displayCardTotal(false);
 
+				if (blackJack(playerCardTotal) && blackJack(dealerCardTotal))
+				{
+					MessageBox::Show("BlackJack Tie", "BlackJack Tie...");
+					cleanup(playerCardsInHand, dealerCardsInHand);
+				}
+
+				else if (blackJack(playerCardTotal))
+				{
+					MessageBox::Show("Player BlackJack!", "Player BlackJack");
+					cleanup(playerCardsInHand, dealerCardsInHand);
+				}
+
+				else if (blackJack(dealerCardTotal))
+				{
+					MessageBox::Show("Dealer BlackJack...", "Dealer BlackJack...");
+					cleanup(playerCardsInHand, dealerCardsInHand);
+				}
+				
+				for (int i = 0; i < playerCardsInHand; i++)
+				{
+					if (cardAce(cardsDealtToPlayer[i]))
+						{
+							if (changeValueAce(i) == 1)
+							{
+								playerCardTotal -= 10;
+								displayCardTotal(true);
+								displayCardandValue(cardsDealtToPlayer[i], i, playerCardValue, playerCardPositions[i], true);
+							}
+						}
+				}
+				
+
+				if (bust(playerCardTotal))
+				{
+					MessageBox::Show("Bust Message", "Busted!");
+					cleanup(playerCardsInHand, dealerCardsInHand);
+
+				}
 
 			}
+
 		private: System::Void buttonHit_Click(System::Object^  sender, System::EventArgs^  e) 
 {
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
 
+			int playerCardValue;
+
+			////////////////////////////////////////////////////////////////////
+
+			if (deck.Count == 0)
+			{
+				shuffleDeck();
+			}
+
+			cardsDealtToPlayer[playerCardsInHand] = dealCard();
+
+
+			if (cardAce(cardsDealtToPlayer[playerCardsInHand]))
+			{
+				playerCardValue = changeValueAce(playerCardsInHand);
+			}
+
+			else
+			{
+				playerCardValue = getCardValue(cardsDealtToPlayer[playerCardsInHand]);
+			}
+
+			displayCardandValue(cardsDealtToPlayer[playerCardsInHand], playerCardsInHand, playerCardValue, playerCardPositions[playerCardsInHand], true);
+			playerCardsInHand++;
+
+			playerCardTotal += playerCardValue;
+
+			displayCardTotal(true);
+
+			if (bust(playerCardTotal))
+			{
+				MessageBox::Show("Player Bust Message", "Busted!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+				
+			}
+
+			if (playerCardTotal == 5)
+			{
+				MessageBox::Show("Player 5 Card under 22 Win!", "5 Card Win!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+			}
 }
+
 		private: System::Void buttonStay_Click(System::Object^  sender, System::EventArgs^  e) 
 {
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
 
+			int dealerCardValue;
+
+			////////////////////////////////////////////////////////////////////
+
+			while (dealerHit(dealerCardTotal))
+			{
+				if (deck.Count == 0)
+				{
+					shuffleDeck();
+				}
+
+				cardsDealtToDealer[dealerCardsInHand] = dealCard();
+
+				for (int i = 0; i < dealerCardsInHand; i++)
+				{
+					if (dealerHasAce() && cardAce(cardsDealtToDealer[i]))
+					{
+						dealerCardValue = 1;
+					}
+				}
+
+				dealerCardValue = getCardValue(cardsDealtToDealer[dealerCardsInHand]);
+
+				displayCardandValue(cardsDealtToDealer[dealerCardsInHand], dealerCardsInHand, dealerCardValue, dealerCardPositions[dealerCardsInHand], false);
+
+				dealerCardsInHand++;
+
+				dealerCardTotal += dealerCardValue;
+
+				displayCardTotal(false);
+			}
+
+			if (bust(dealerCardTotal))
+			{
+				MessageBox::Show("Dealer Bust Message", "Busted!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+
+			}
+
+			else if (dealerCardTotal > playerCardTotal)
+			{
+				MessageBox::Show("Dealer Win Message", "Dealer Wins!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+			}
+
+			else if (playerCardTotal > dealerCardTotal)
+			{
+				MessageBox::Show("Player Win Message", "Player Wins!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+			}
+
+			else if (playerCardTotal == dealerCardTotal)
+			{
+				MessageBox::Show("Player & Dealer Tie", "Tie!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+			}
+
+			else
+			{
+				MessageBox::Show("Error! Dealer Total: " + dealerCardTotal.ToString() + " Player Total: " + playerCardTotal.ToString(), "Error!");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+			}
 }
 };
 }
