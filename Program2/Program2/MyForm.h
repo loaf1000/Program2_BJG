@@ -1,3 +1,130 @@
+
+/**************************************************************
+***************************************************************
+***************************************************************
+
+ID INFORMATION
+
+Programmers		        :Laithe Marshall
+Assignment #		    :2
+Assignment Name		    :Black Jack
+Course # and Title		:CISC 192 - C++
+Class Meeting Time		:MW 9:35 - 12:45
+Instructor			    :Professor Forman
+Hours			        :40
+Difficulty			    :5
+Completion Date		    :December/01/2014
+Project Name		    :Program2
+
+***************************************************************
+***************************************************************
+CUSTOM DEFINED FUNCTIONS
+
+blackJack
+bust
+cardAce
+changeValueAce
+cleanup
+credits
+countCardsUsed
+countHandTypes
+dealCard
+dealerAceChange
+dealerHit
+debugDecks
+displayCardandValue
+displayCardTotal
+displayDealerStrategy
+displayFarewellMessage
+displayGameResults
+displayGameStats
+getCardValue
+initializePointArrays
+quit
+shuffleDeck
+updateBank
+
+***************************************************************
+***************************************************************
+EVENT-DRIVEN FUNCTIONS
+
+buttonCredits_Click
+buttonHelp_Click
+buttonHit_Click
+buttonLogin_Click
+buttonQuit_Click
+buttonPlay_Click
+buttonResults_Click
+buttonStay_Click
+MyForm_Load
+timerCardAnimation_Tick
+timerDateTime_Tick
+***************************************************************
+***************************************************************
+PROGRAM DESCRIPTION
+The program welcomes the user to the Black Jack "table" and asks
+the user to log in. The user will then be given a bank roll of 
+$100 to play black jack. When the user hits play, they bet $10
+to play a hand of Black Jack. The user has the option to hit or stay,
+and plays against the dealer. The user gains $20 if they win, $30 if they
+Black Jack, and $10 if they tie. If the user runs out of money they will
+be forced to quit the program. The user may click on the help button
+for detailed instructions of how to play & how to use the program.
+The credits button will display credits.The Results button displays
+statistics based on the hands of Black Jack played. The Quit button
+will exit the program after giving the user a farewell message. 
+
+
+***************************************************************
+***************************************************************
+
+CREDITS
+
+Acknowledge those who helped you and whom you helped
+Remember the “triangle of learning”
+
+Thanks for assistance and inspiration from:
+
+Thanks to Professor Forman for creating TDHOs.
+
+Thanks for the opportunity to assist and inspire:
+
+N/A
+
+***************************************************************
+***************************************************************
+
+MEDIA
+
+Images & Icons
+
+Queen of Diamonds
+http://s12.photobucket.com/user/yanzai03/media/AQ.jpg.html
+Face cards and Aces
+http://playingcardcollector.net/2013/05/02/fullmetal-alchemist-playing-cards/
+FMA everyone (exit background)
+http://imgdonkey.com/big/N01ZNEZGbg/all-right-imgur-lets-rustle-some-jimmies-which-is-better.gif
+Transmutation Circle
+http://fc01.deviantart.net/fs42/f/2009/067/c/c/Transmutation_Circle_by_Wojtas19.png
+Anime shuffle
+http://media.giphy.com/media/7sRMjntXYEITu/giphy.gif
+Face Value Cards
+http://ardisoft.net/svg-z-cards/screenshot.png
+FMA Icon
+http://fc04.deviantart.net/fs70/f/2012/274/3/1/fma_icon_2_by_iloveyoukisshu-d5gfxgm.gif
+
+Music
+
+Let it Out by Fukuhara Miho TV edit (exit song)
+http://thepiratebay.se/torrent/8206483/Fullmetal_Alchemist__Brotherhood_Soundtrack_Collection
+
+Lapis Philosophorum Chant Composed by Senju Akira
+http://thepiratebay.se/torrent/8206483/Fullmetal_Alchemist__Brotherhood_Soundtrack_Collection
+
+***************************************************************
+***************************************************************
+**************************************************************/
+
 #pragma once
 
 namespace Program2 {
@@ -8,6 +135,7 @@ namespace Program2 {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::IO;
 
 	/// <summary>
 	/// Summary for MyForm
@@ -60,6 +188,13 @@ namespace Program2 {
 	private: System::Windows::Forms::Label^  labelPlayerTotal;
 
 	private: System::Windows::Forms::Label^  labelDealerTotal;
+	private: System::Windows::Forms::Button^  buttonResults;
+	private: System::Windows::Forms::Label^  labelGameNumber;
+	private: System::Windows::Forms::ComboBox^  comboBoxCheat;
+	private: System::Windows::Forms::Label^  labelBank;
+
+
+
 
 
 
@@ -102,6 +237,10 @@ namespace Program2 {
 			this->buttonStay = (gcnew System::Windows::Forms::Button());
 			this->labelPlayerTotal = (gcnew System::Windows::Forms::Label());
 			this->labelDealerTotal = (gcnew System::Windows::Forms::Label());
+			this->buttonResults = (gcnew System::Windows::Forms::Button());
+			this->labelGameNumber = (gcnew System::Windows::Forms::Label());
+			this->comboBoxCheat = (gcnew System::Windows::Forms::ComboBox());
+			this->labelBank = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxGif))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxAlignment))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxCardAnimation1))->BeginInit();
@@ -265,6 +404,7 @@ namespace Program2 {
 			this->labelDescription->Size = System::Drawing::Size(388, 33);
 			this->labelDescription->TabIndex = 7;
 			this->labelDescription->Text = L"Please log in with your username";
+			this->labelDescription->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// buttonLogin
 			// 
@@ -292,6 +432,7 @@ namespace Program2 {
 			this->buttonHelp->TabIndex = 9;
 			this->buttonHelp->Text = L"Help";
 			this->buttonHelp->UseVisualStyleBackColor = false;
+			this->buttonHelp->Click += gcnew System::EventHandler(this, &MyForm::buttonHelp_Click);
 			// 
 			// buttonQuit
 			// 
@@ -305,6 +446,7 @@ namespace Program2 {
 			this->buttonQuit->TabIndex = 10;
 			this->buttonQuit->Text = L"Quit";
 			this->buttonQuit->UseVisualStyleBackColor = false;
+			this->buttonQuit->Click += gcnew System::EventHandler(this, &MyForm::buttonQuit_Click);
 			// 
 			// buttonCredits
 			// 
@@ -312,12 +454,13 @@ namespace Program2 {
 			this->buttonCredits->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->buttonCredits->ForeColor = System::Drawing::Color::White;
-			this->buttonCredits->Location = System::Drawing::Point(822, 678);
+			this->buttonCredits->Location = System::Drawing::Point(824, 678);
 			this->buttonCredits->Name = L"buttonCredits";
 			this->buttonCredits->Size = System::Drawing::Size(78, 40);
 			this->buttonCredits->TabIndex = 11;
 			this->buttonCredits->Text = L"Credits";
 			this->buttonCredits->UseVisualStyleBackColor = false;
+			this->buttonCredits->Click += gcnew System::EventHandler(this, &MyForm::buttonCredits_Click);
 			// 
 			// buttonPlay
 			// 
@@ -383,12 +526,73 @@ namespace Program2 {
 			this->labelDealerTotal->Font = (gcnew System::Drawing::Font(L"Times New Roman", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->labelDealerTotal->ForeColor = System::Drawing::Color::White;
-			this->labelDealerTotal->Location = System::Drawing::Point(819, 637);
+			this->labelDealerTotal->Location = System::Drawing::Point(819, 648);
 			this->labelDealerTotal->Name = L"labelDealerTotal";
 			this->labelDealerTotal->Size = System::Drawing::Size(179, 27);
 			this->labelDealerTotal->TabIndex = 16;
 			this->labelDealerTotal->Text = L"Dealer\'s Total: 21";
 			this->labelDealerTotal->Visible = false;
+			// 
+			// buttonResults
+			// 
+			this->buttonResults->BackColor = System::Drawing::Color::Black;
+			this->buttonResults->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonResults->ForeColor = System::Drawing::Color::White;
+			this->buttonResults->Location = System::Drawing::Point(111, 678);
+			this->buttonResults->Name = L"buttonResults";
+			this->buttonResults->Size = System::Drawing::Size(78, 40);
+			this->buttonResults->TabIndex = 17;
+			this->buttonResults->Text = L"Results";
+			this->buttonResults->UseVisualStyleBackColor = false;
+			this->buttonResults->Visible = false;
+			this->buttonResults->Click += gcnew System::EventHandler(this, &MyForm::buttonResults_Click);
+			// 
+			// labelGameNumber
+			// 
+			this->labelGameNumber->AutoSize = true;
+			this->labelGameNumber->Font = (gcnew System::Drawing::Font(L"Times New Roman", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->labelGameNumber->ForeColor = System::Drawing::Color::White;
+			this->labelGameNumber->Location = System::Drawing::Point(204, 690);
+			this->labelGameNumber->Name = L"labelGameNumber";
+			this->labelGameNumber->Size = System::Drawing::Size(135, 27);
+			this->labelGameNumber->TabIndex = 18;
+			this->labelGameNumber->Text = L"Game 99999";
+			this->labelGameNumber->Visible = false;
+			// 
+			// comboBoxCheat
+			// 
+			this->comboBoxCheat->BackColor = System::Drawing::Color::Black;
+			this->comboBoxCheat->Enabled = false;
+			this->comboBoxCheat->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->comboBoxCheat->ForeColor = System::Drawing::Color::White;
+			this->comboBoxCheat->FormattingEnabled = true;
+			this->comboBoxCheat->Items->AddRange(gcnew cli::array< System::Object^  >(9) {
+				L"Player Black Jack", L"Dealer Black Jack",
+					L"Black Jack Tie", L"Player 3 Card Bust", L"Dealer 3 Card Bust (Player hit Stay)", L"Player 3 Card Win", L"Dealer 3 Card Win (Player hit Stay) ",
+					L"Player 5 Card Win", L"Dealer 5 Card Win (Player hit Stay)"
+			});
+			this->comboBoxCheat->Location = System::Drawing::Point(361, 569);
+			this->comboBoxCheat->Name = L"comboBoxCheat";
+			this->comboBoxCheat->Size = System::Drawing::Size(292, 27);
+			this->comboBoxCheat->TabIndex = 19;
+			this->comboBoxCheat->Text = L"Choose an option to Debug";
+			this->comboBoxCheat->Visible = false;
+			// 
+			// labelBank
+			// 
+			this->labelBank->AutoSize = true;
+			this->labelBank->Font = (gcnew System::Drawing::Font(L"Times New Roman", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->labelBank->ForeColor = System::Drawing::Color::White;
+			this->labelBank->Location = System::Drawing::Point(12, 621);
+			this->labelBank->Name = L"labelBank";
+			this->labelBank->Size = System::Drawing::Size(123, 27);
+			this->labelBank->TabIndex = 20;
+			this->labelBank->Text = L"Bank: $100";
+			this->labelBank->Visible = false;
 			// 
 			// MyForm
 			// 
@@ -398,6 +602,7 @@ namespace Program2 {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Center;
 			this->ClientSize = System::Drawing::Size(1008, 730);
+			this->Controls->Add(this->labelGameNumber);
 			this->Controls->Add(this->buttonCredits);
 			this->Controls->Add(this->buttonQuit);
 			this->Controls->Add(this->buttonHelp);
@@ -410,16 +615,19 @@ namespace Program2 {
 			this->Controls->Add(this->labelTitle);
 			this->Controls->Add(this->pictureBoxGif);
 			this->Controls->Add(this->pictureBoxAlignment);
-			this->Controls->Add(this->buttonPlay);
 			this->Controls->Add(this->buttonHit);
 			this->Controls->Add(this->buttonStay);
+			this->Controls->Add(this->buttonResults);
 			this->Controls->Add(this->labelDealerTotal);
+			this->Controls->Add(this->comboBoxCheat);
+			this->Controls->Add(this->buttonPlay);
+			this->Controls->Add(this->labelBank);
 			this->Controls->Add(this->labelPlayerTotal);
 			this->DoubleBuffered = true;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->Name = L"MyForm";
 			this->SizeGripStyle = System::Windows::Forms::SizeGripStyle::Show;
-			this->Text = L"Program 2";
+			this->Text = L"Laithe\'s Blackjack Table";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxGif))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxAlignment))->EndInit();
@@ -436,7 +644,7 @@ namespace Program2 {
 		//				DECLARE GLOBAL VARIABLES/OBJECTS
 		//
 		////////////////////////////////////////////////////////////////////
-		enum class Cards 
+		enum class Cards //c for clubs, d for diamonds, h for hearts, s for spades, J for jacks, Q for queens, K for kings
 		{
 			cA, c2, c3, c4, c5, c6, c7, c8, c9, c10, cJ, cQ, cK,
 			dA, d2, d3, d4, d5, d6, d7, d8, d9, d10, dJ, dQ, dK,
@@ -447,21 +655,56 @@ namespace Program2 {
 		String^ username;
 		String^ firstName;
 
-		array<PictureBox^>^ playerCardPictureBoxes = gcnew array<PictureBox^>(10);
+		// creates arrays to store cards, card images, and card labels for the player
+		array<PictureBox^>^ playerCardPictureBoxes = gcnew array<PictureBox^>(10); 
 		array<Label^>^ playerCardLabels = gcnew array<Label^>(10);
 		array<Cards>^ cardsDealtToPlayer = gcnew array<Cards>(10);
 		array<Point>^ playerCardPositions; // card positions for 5 cards (50, 112), (180, 112), (310, 112), (108, 333), (238, 333)
 
+		// creates arrays to store cards, card images, and card labels for the dealer
 		array<PictureBox^>^ dealerCardPictureBoxes = gcnew array<PictureBox^>(10);
 		array<Label^>^ dealerCardLabels = gcnew array<Label^>(10);
 		array<Cards>^ cardsDealtToDealer = gcnew array<Cards>(10);
 		array<Point>^ dealerCardPositions; // card positions for 5 cards (573 ,112), (703 , 112), (833, 112), (631, 333), (761, 333)
 
 		ArrayList deck;
-		ArrayList debug;
-		int playerCardTotal = 0, dealerCardTotal = 0, playerCardsInHand = 0, dealerCardsInHand = 0, win = 0, loss = 0, tie = 0;
+
+		//counters for stats
+		int playerCardTotal = 0, dealerCardTotal = 0, playerCardsInHand = 0, dealerCardsInHand = 0, gameNumber = 0, win = 0, loss = 0, tie = 0;
+		int totalCardsUsed = 0, totalAcesUsed = 0, totalTwosUsed = 0, totalThreesUsed = 0, totalFoursUsed = 0, totalFivesUsed = 0;
+		int totalSixesUsed = 0, totalSevensUsed = 0, totalEightsUsed = 0, totalNinesUsed = 0, totalTensUsed = 0, totalJacksUsed = 0;
+		int totalQueensUsed = 0, totalKingsUsed = 0, timesShuffled = 0;
+		int handLessThan16 = 0, handBetween16And20 = 0, hand21 = 0, handGreaterThan21 = 0;
+
+		int bank = 100;
+
+		bool playingGame = false, debugMode = false, bankrupt = false, playerWin = false, tied = false, playerBlackJack = false, bet = false;
+		////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////
+		//
+		//				START CUSTOM DEFINED FUNCTIONS
+		//
+		////////////////////////////////////////////////////////////////////
+
+
+		/**************************************************************
+
+			NAME: blackJack
+
+			DESCRIPTION: Validity statement that returns true if card total is 
+			equal to 21, else it returns false.
+
+			PRECONDITIONS: Function expects a positive integer between 2-32 which
+			is given by calculating the value of a hand in black jack.
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonPlay_Click
+
+			CALLS: None
+
+		**************************************************************/
 
 		bool blackJack(int cardTotal)
 		{
@@ -476,6 +719,25 @@ namespace Program2 {
 			}
 		}
 
+
+		/**************************************************************
+
+			NAME: bust
+
+			DESCRIPTION: Validity statement that returns true if the card total is greater
+			than 21, else it returns false
+
+			PRECONDITIONS:  Function expects a positive integer between 2-32 which
+			is given by calculating the value of a hand in black jack.
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
 		bool bust(int cardTotal)
 		{
 			if (cardTotal > 21)
@@ -488,6 +750,25 @@ namespace Program2 {
 				return false;
 			}
 		}
+
+
+		/**************************************************************
+
+			NAME: cardAce
+
+			DESCRIPTION: Validity statement that returns true if a card is an ace,
+			else it returns false
+
+			PRECONDITIONS: function takes a valid card from the enum class cards
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
 
 		bool cardAce(Cards card)
 		{
@@ -503,6 +784,25 @@ namespace Program2 {
 				return false;
 			}
 		}
+
+
+		/**************************************************************
+
+			NAME: changeValueAce
+
+			DESCRIPTION: Asks the player if they would like the player to change the value of their ace
+			Yes returns the integer 1 and No returns the integer 11.
+
+			PRECONDITIONS: function requires a valid index integer of the ace to change value in the label
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click
+
+			CALLS: None
+
+		**************************************************************/
+
 
 		int changeValueAce(int index)
 		{
@@ -536,11 +836,40 @@ namespace Program2 {
 				
 		}
 
+
+		/**************************************************************
+
+			NAME: cleanup
+
+			DESCRIPTION: Readys the program to play another game of black jack
+			by clearing the screen, updating statistics, and reinitializing variables to their 
+			original value.
+
+			PRECONDITIONS: Function requires the integer amount of cards used by player and dealer
+			to clear all cards and their labels using these values and a index ceiling. These values
+			must be exact, to high and the program will crash, to low and it will not clear all the cards and labels.
+
+			POSTCONDITIONS: None
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: countCardsUsed, countHandTypes, quit, updateBank
+
+		**************************************************************/
+
 		void cleanup(int playerIndex, int dealerIndex)
 		{
+			
 			buttonHit->Visible = false;
 			buttonStay->Visible = false;
 			buttonPlay->Visible = true;
+			labelDescription->Text = "";
+			labelGameNumber->Visible = false;
+
+			playingGame = false;
+
+			countHandTypes(playerCardTotal, dealerCardTotal);
+			updateBank();
 
 			playerCardsInHand = 0;
 			dealerCardsInHand = 0;
@@ -548,8 +877,19 @@ namespace Program2 {
 			playerCardTotal = 0;
 			dealerCardTotal = 0;
 
+			playerWin = false;
+			tied = false;
+			playerBlackJack = false;
+			bet = false;
+
 			labelPlayerTotal->Visible = false;
 			labelDealerTotal->Visible = false;
+
+			if (debugMode)
+			{
+				comboBoxCheat->Text = "Choose an option to Debug";
+				comboBoxCheat->Visible = true;
+			}
 
 			for (int i = 0; i < playerIndex; i++)
 			{
@@ -564,7 +904,385 @@ namespace Program2 {
 				dealerCardLabels[i]->Visible = false;
 				dealerCardPictureBoxes[i]->Visible = false;
 			}
+
+			countCardsUsed(playerIndex, dealerIndex);
+
+			if (bankrupt)
+			{
+				quit();
+			}
 		}
+
+		/**************************************************************
+
+			NAME: credits
+
+			DESCRIPTION: Function displays message boxes for each of the following,
+			ID info, credits, media, and stars.
+
+			PRECONDITIONS: None
+
+			POSTCONDITIONS: None
+
+			CALLED BY: buttonCredits_Click
+
+			CALLS: None
+
+			**************************************************************/
+
+		void credits()
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
+			String^ message;
+			StreamReader^ sr;
+
+			////////////////////////////////////////////////////////////////////
+
+			sr = gcnew StreamReader("..//Farewell/ID_info.txt");
+			message = sr->ReadToEnd();
+			sr->Close();
+
+			MessageBox::Show(
+				message,
+				"ID INFORMATION" // message box caption
+				);
+
+			sr = gcnew StreamReader("..//Farewell/Credits.txt");
+			message = sr->ReadToEnd();
+			sr->Close();
+
+			MessageBox::Show(
+				message,
+				"CREDITS" // message box caption
+				);
+
+			sr = gcnew StreamReader("..//Farewell/Media.txt");
+			message = sr->ReadToEnd();
+			sr->Close();
+
+			MessageBox::Show(
+				message,
+				"MEDIA" // message box caption
+				);
+
+			sr = gcnew StreamReader("..//Farewell/Stars.txt");
+			message = sr->ReadToEnd();
+			sr->Close();
+
+			MessageBox::Show(
+
+				message,
+				"STARS" // message box caption
+				);
+		}
+
+		/**************************************************************
+
+			NAME: countCardsUsed
+
+			DESCRIPTION: Counts how many total cards and card values are used in a game of Black Jack.
+
+			PRECONDITIONS: Function requires the integer amount of cards used by player and dealer
+			to clear all cards and their labels using these values and a index ceiling. These values
+			must be exact, to high and the program will crash, to low and it will not count all the cards 
+			in the dealer's and player's hand.
+
+			POSTCONDITIONS: None
+
+			CALLED BY: cleanup
+
+			CALLS: None
+
+			**************************************************************/
+
+		void countCardsUsed(int playerIndex, int dealerIndex)
+		{
+			for (int i = 0; i < playerIndex; i++)
+			{
+				switch (cardsDealtToPlayer[i])
+				{
+				case Cards::cA:
+				case Cards::dA:
+				case Cards::sA:
+				case Cards::hA:
+					totalAcesUsed++;
+					break;
+				case Cards::c2:
+				case Cards::d2:
+				case Cards::s2:
+				case Cards::h2:
+
+					totalTwosUsed++;
+					break;
+				case Cards::c3:
+				case Cards::d3:
+				case Cards::s3:
+				case Cards::h3:
+
+					totalThreesUsed++;
+					break;
+				case Cards::c4:
+				case Cards::d4:
+				case Cards::s4:
+				case Cards::h4:
+
+					totalFoursUsed++;
+					break;
+				case Cards::c5:
+				case Cards::d5:
+				case Cards::s5:
+				case Cards::h5:
+
+					totalFivesUsed++;
+					break;
+				case Cards::c6:
+				case Cards::d6:
+				case Cards::s6:
+				case Cards::h6:
+
+					totalSixesUsed++;
+					break;
+				case Cards::c7:
+				case Cards::d7:
+				case Cards::s7:
+				case Cards::h7:
+
+					totalSevensUsed++;
+					break;
+				case Cards::c8:
+				case Cards::d8:
+				case Cards::s8:
+				case Cards::h8:
+
+					totalEightsUsed++;
+					break;
+				case Cards::c9:
+				case Cards::d9:
+				case Cards::s9:
+				case Cards::h9:
+
+					totalNinesUsed++;
+					break;
+				case Cards::c10:
+				case Cards::d10:
+				case Cards::s10:
+				case Cards::h10:
+
+					totalTensUsed++;
+					break;
+				case Cards::cJ:
+				case Cards::dJ:
+				case Cards::sJ:
+				case Cards::hJ:
+
+					totalJacksUsed++;
+					break;
+				case Cards::cQ:
+				case Cards::dQ:
+				case Cards::sQ:
+				case Cards::hQ:
+
+					totalQueensUsed++;
+					break;
+				case Cards::cK:
+				case Cards::dK:
+				case Cards::sK:
+				case Cards::hK:
+
+					totalKingsUsed++;
+					break;
+				default:
+					//this should not occur
+					break;
+				}
+			}
+
+				for (int i = 0; i < dealerIndex; i++)
+				{
+					switch (cardsDealtToDealer[i])
+					{
+					case Cards::cA:
+					case Cards::dA:
+					case Cards::sA:
+					case Cards::hA:
+						totalAcesUsed++;
+						break;
+					case Cards::c2:
+					case Cards::d2:
+					case Cards::s2:
+					case Cards::h2:
+
+						totalTwosUsed++;
+						break;
+					case Cards::c3:
+					case Cards::d3:
+					case Cards::s3:
+					case Cards::h3:
+
+						totalThreesUsed++;
+						break;
+					case Cards::c4:
+					case Cards::d4:
+					case Cards::s4:
+					case Cards::h4:
+
+						totalFoursUsed++;
+						break;
+					case Cards::c5:
+					case Cards::d5:
+					case Cards::s5:
+					case Cards::h5:
+
+						totalFivesUsed++;
+						break;
+					case Cards::c6:
+					case Cards::d6:
+					case Cards::s6:
+					case Cards::h6:
+
+						totalSixesUsed++;
+						break;
+					case Cards::c7:
+					case Cards::d7:
+					case Cards::s7:
+					case Cards::h7:
+
+						totalSevensUsed++;
+						break;
+					case Cards::c8:
+					case Cards::d8:
+					case Cards::s8:
+					case Cards::h8:
+
+						totalEightsUsed++;
+						break;
+					case Cards::c9:
+					case Cards::d9:
+					case Cards::s9:
+					case Cards::h9:
+
+						totalNinesUsed++;
+						break;
+					case Cards::c10:
+					case Cards::d10:
+					case Cards::s10:
+					case Cards::h10:
+
+						totalTensUsed++;
+						break;
+					case Cards::cJ:
+					case Cards::dJ:
+					case Cards::sJ:
+					case Cards::hJ:
+
+						totalJacksUsed++;
+						break;
+					case Cards::cQ:
+					case Cards::dQ:
+					case Cards::sQ:
+					case Cards::hQ:
+
+						totalQueensUsed++;
+						break;
+					case Cards::cK:
+					case Cards::dK:
+					case Cards::sK:
+					case Cards::hK:
+
+						totalKingsUsed++;
+						break;
+					default:
+						//this should not occur
+						break;
+					}
+				}
+
+				totalCardsUsed += dealerIndex + playerIndex;
+			}
+
+			/**************************************************************
+
+				NAME: countHandTypes
+
+				DESCRIPTION: Function counts the following hand types:
+				<16, >15 & <21, =21, and > 21 
+
+				PRECONDITIONS: Function requires the card total value of the player hand
+				and the dealer hand.
+
+				POSTCONDITIONS: None
+
+				CALLED BY: cleanup
+
+				CALLS: None
+
+				**************************************************************/
+
+		void countHandTypes(int playerHand, int dealerHand)
+		{
+			if (playerHand < 16)
+			{
+				handLessThan16++;
+			}
+
+			if (dealerHand < 16)
+			{
+				handLessThan16++;
+			}
+
+			if (dealerHand > 15 && dealerHand < 21)
+			{
+				handBetween16And20++;
+			}
+
+			if (playerHand > 15 && playerHand < 21)
+			{
+				handBetween16And20++;
+			}
+
+			if (playerHand == 21)
+			{
+				hand21++;
+			}
+
+			if (dealerHand == 21)
+			{
+				hand21++;
+			}
+
+			if (playerHand > 21)
+			{
+				handGreaterThan21++;
+			}
+
+			if (dealerHand > 21)
+			{
+				handGreaterThan21++;
+			}
+
+		}
+
+		/**************************************************************
+
+			NAME: dealCard
+
+			DESCRIPTION: this function simulates dealing a card from a deck and returns
+			the card dealt.
+
+			PRECONDITIONS: None
+
+			POSTCONDITIONS: See description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS:
+
+			**************************************************************/
 
 		Cards dealCard()
 		{
@@ -585,42 +1303,53 @@ namespace Program2 {
 			return deckCopy[0];
 		}
 
-		bool dealerHasAce()
+		/**************************************************************
+
+			NAME: dealerAceChange
+
+			DESCRIPTION: Changes the value of an ace for the dealer. Returns a 1 if adding
+			11 to the card total would make the dealer bust, otherwise the function returns 11.
+
+			PRECONDITIONS: Function requires the integer card value total from the dealer's hand.
+
+			POSTCONDITIONS: See description
+
+			CALLED BY: buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+		**************************************************************/
+
+		int dealerAceChange(int cardTotal)
 		{
-			////////////////////////////////////////////////////////////////////
-			//
-			//				DECLARE LOCAL VARIABLES/OBJECTS
-			//
-			////////////////////////////////////////////////////////////////////
-
-			bool hasAce = false;
-			int numberofAces = 0;
-
-			////////////////////////////////////////////////////////////////////
-
-			for (int i = 0; i < dealerCardsInHand; i++)
+			if (cardTotal + 11 > 21)
 			{
-				switch (cardsDealtToDealer[i])
-				{
-					case Cards::cA:
-					case Cards::dA:
-					case Cards::sA:
-					case Cards::hA:
-
-						numberofAces++;
-						break;
-						// no deafult required
-				}
-					
+				return 1;
 			}
 
-			if (numberofAces > 1)
+			else
 			{
-				hasAce = true;
+				return 11;
 			}
-
-			return hasAce;
 		}
+
+		/**************************************************************
+
+			NAME: dealerHit
+
+			DESCRIPTION: Validity statement to determine if the dealer will hit
+			in a game of Black Jack. Function returns true if the card total is 
+			less than 16, else it returns false.
+
+			PRECONDITIONS: Function requires the integer card value total from the dealer's hand.
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
 
 		bool dealerHit(int cardTotal)
 		{
@@ -635,6 +1364,128 @@ namespace Program2 {
 			}
 		}
 
+		/**************************************************************
+
+			NAME: debugDecks
+
+			DESCRIPTION: prepares a deck to use in the debugging process based 
+			on a combo box list.
+
+			PRECONDITIONS: An option in the combo box list has been selected.
+
+			POSTCONDITIONS: Stacks a deck based on the precondition.
+
+			CALLED BY: buttonPlay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
+		void debugDecks()
+		{
+			if (comboBoxCheat->Text == "Player Black Jack")
+			{
+				deck.Add(Cards::sA);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::sJ);
+				deck.Add(Cards::s3);
+			}
+
+			if (comboBoxCheat->Text == "Dealer Black Jack")
+			{
+				deck.Add(Cards::s2);
+				deck.Add(Cards::sA);
+				deck.Add(Cards::s3);
+				deck.Add(Cards::sJ);
+			}
+
+			if (comboBoxCheat->Text == "Black Jack Tie")
+			{
+				deck.Add(Cards::sA);
+				deck.Add(Cards::sA);
+				deck.Add(Cards::sJ);
+				deck.Add(Cards::sJ);
+			}
+
+			if (comboBoxCheat->Text == "Player 3 Card Bust")
+			{
+				deck.Add(Cards::sK);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::sQ);
+				deck.Add(Cards::s3);
+				deck.Add(Cards::sJ);
+			}
+
+			if (comboBoxCheat->Text == "Dealer 3 Card Bust (Player hit Stay)")
+			{
+				deck.Add(Cards::sK);
+				deck.Add(Cards::s6);
+				deck.Add(Cards::s5);
+				deck.Add(Cards::s7);
+				deck.Add(Cards::sJ);
+			}
+
+			if (comboBoxCheat->Text == "Player 3 Card Win")
+			{
+				deck.Add(Cards::s6);
+				deck.Add(Cards::s10);
+				deck.Add(Cards::s7);
+				deck.Add(Cards::s9);
+				deck.Add(Cards::s8);
+			}
+
+			if (comboBoxCheat->Text == "Dealer 3 Card Win (Player hit Stay) ")
+			{
+				deck.Add(Cards::s10);
+				deck.Add(Cards::s6);
+				deck.Add(Cards::s9);
+				deck.Add(Cards::s7);
+				deck.Add(Cards::s8);
+			}
+
+			if (comboBoxCheat->Text == "Player 5 Card Win")
+			{
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s3);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+			}
+
+			if (comboBoxCheat->Text == "Dealer 5 Card Win (Player hit Stay)")
+			{
+				deck.Add(Cards::s10);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::sJ);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+				deck.Add(Cards::s2);
+			}
+		}
+
+		/**************************************************************
+
+			NAME: displayCardandValue
+
+			DESCRIPTION: Displays a picture box with a proper and label with a proper value for a given playing card.
+
+			PRECONDITIONS: Function require a Cards card to pull the proper image from the image list. It also requires
+			an integer value for the index position to store the picture box and label in the proper position of the array. 
+			A integer value for the value of the card is required to display in a label. A starting point is required 
+			to draw the picture box and label. The bool is required to determine if the picture box and label is being
+			stored for the dealer (false) or the player (true).
+
+			POSTCONDITIONS: See description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
 		void displayCardandValue(Cards card, int index, int cardValue, Point startingPosition,bool player)
 		{
 			if (player)
@@ -647,17 +1498,7 @@ namespace Program2 {
 				this->playerCardPictureBoxes[index]->TabIndex = 4;
 				this->playerCardPictureBoxes[index]->TabStop = false;
 				this->playerCardPictureBoxes[index]->Visible = true;
-				try
-				{
-					this->playerCardPictureBoxes[index]->Image = imageListCards->Images[(int)card];
-				}
-				catch (Exception^ e)
-				{
-					debug.Add(card);
-					String^  error = "error at line 461 Value of card is: ";
-					MessageBox::Show("Error:" + e);
-					MessageBox::Show(error + debug[0]);
-				}
+				this->playerCardPictureBoxes[index]->Image = imageListCards->Images[(int)card];
 
 				this->playerCardPictureBoxes[index]->SizeMode = PictureBoxSizeMode::StretchImage;
 				this->Controls->Add(this->playerCardPictureBoxes[index]);
@@ -689,17 +1530,7 @@ namespace Program2 {
 				this->dealerCardPictureBoxes[index]->TabIndex = 4;
 				this->dealerCardPictureBoxes[index]->TabStop = false;
 				this->dealerCardPictureBoxes[index]->Visible = true;
-				try
-				{
-					this->dealerCardPictureBoxes[index]->Image = imageListCards->Images[(int)card];
-				}
-				catch (Exception^ e)
-				{
-					debug.Add(card);
-					String^  error = "error at line 461 Value of card is: ";
-					MessageBox::Show("Error:" + e);
-					MessageBox::Show(error + debug[0]);
-				}
+				this->dealerCardPictureBoxes[index]->Image = imageListCards->Images[(int)card];
 
 				this->dealerCardPictureBoxes[index]->SizeMode = PictureBoxSizeMode::StretchImage;
 				this->Controls->Add(this->dealerCardPictureBoxes[index]);
@@ -722,6 +1553,23 @@ namespace Program2 {
 
 		}
 
+		/**************************************************************
+
+			NAME: displayCardTotal
+
+			DESCRIPTION: displays a label with total value of the cards displayed
+
+			PRECONDITIONS: requires a boolean expression to determine if the
+			card total displayed is for the player(true) or dealer(false).
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
 		void displayCardTotal(bool player)
 		{
 			if (player)
@@ -737,7 +1585,37 @@ namespace Program2 {
 			}
 		}
 
-		void displayDeck()
+		/**************************************************************
+
+			NAME: displayDealerStrategy
+
+			DESCRIPTION: displays in a message box what dealer will do in a game of black jack
+			given the their current hand value.
+
+			PRECONDITIONS: None
+
+			POSTCONDITIONS: See description
+
+			CALLED BY: buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
+		void displayDealerStrategy()
+		{
+			if (dealerCardTotal < 16)
+			{
+				MessageBox::Show("Dealer has " + dealerCardTotal.ToString() + " and will hit on 15 or lower.", "Dealer Strategy");
+			}
+
+			else
+			{
+				MessageBox::Show( "Dealer has " + dealerCardTotal.ToString() + " and will stay on 16 or higher.","Dealer Strategy");
+			}
+		}
+
+		/*void displayDeck() used to display the cards in a deck. Only used during initial debugging process.
 		{
 			labelDescription->Text = "";
 
@@ -747,7 +1625,250 @@ namespace Program2 {
 			}
 			labelDescription->Location = Point(504 - (labelDescription->Width / 2), 49);
 			deck.RemoveRange(0, deck.Count);
+		}*/
+
+		/**************************************************************
+
+			NAME: displayFarewellMessage
+
+			DESCRIPTION: displays farewell messages based on how well a user did
+			while playing black jack.
+
+			PRECONDITIONS: None
+
+			POSTCONDITIONS: See description
+
+			CALLED BY: quit
+
+			CALLS: None
+
+		**************************************************************/
+
+		void displayFarewellMessage()
+		{
+			if (bankrupt)
+			{
+				MessageBox::Show("Well, this is awkward " + firstName + "... You seem to be out of money.\n"+ 
+								 "Time for you to go... See you when you get more money.", "Bankrupt!");
+			}
+
+			if (gameNumber == 0)
+			{
+				if (firstName == nullptr)
+				{
+					MessageBox::Show("Goodbye anonymous user. Hopefully next time you'll play a game.", "Farewell");
+				}
+				
+				else
+				{
+					MessageBox::Show("Goodbye " + firstName + ". Hopefully next time you'll play a game.", "Farewell");
+				}
+			}
+
+			else
+			{
+				if (bank > 0)
+				{
+					MessageBox::Show(firstName + ", you are withdrawing an amount of $" + bank.ToString() + ".", "Congratulations...");
+				}
+
+				if (win > loss)
+				{
+					MessageBox::Show("Goodbye " + firstName + ". Out of " + gameNumber.ToString() + " games you won " + win.ToString() +
+									 " game(s) while the dealer won " + loss.ToString() + " game(s). You and the Dealer tied " +
+									  tie.ToString() + " game(s). You beat the dealer! :)", "Farewell");
+				}
+
+				else if (win < loss)
+				{
+					MessageBox::Show("Goodbye " + firstName + ". Out of " + gameNumber.ToString() + " games you won " + win.ToString() +
+									 " game(s) while the dealer won " + loss.ToString() + " game(s). You and the Dealer tied " +
+									 tie.ToString() + " game(s). The dealer beat you! :(", "Farewell");
+				}
+
+				else
+				{
+					MessageBox::Show("Goodbye " + firstName + ". Out of " + gameNumber.ToString() + " games you won " + win.ToString() +
+									 " game(s) while the dealer won " + loss.ToString() + " game(s). You and the Dealer tied " +
+									 tie.ToString() + " game(s). You and the dealer tied. :|", "Farewell");
+				}
+			}
 		}
+
+		/**************************************************************
+
+			NAME: displayGameResults
+
+			DESCRIPTION: Displays in a message box a results message based on 
+			the outcome of a Black Jack game.
+
+			PRECONDITIONS: Function takes a string command to determine what
+			message to display. This command is entered by the programmer.
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
+		void displayGameResults(String^ command)
+		{
+			if (command->ToLower() == "player bust")
+			{
+				MessageBox::Show(firstName + " busts with a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " loses. Dealer wins.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "dealer bust")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer busts with a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " wins. Dealer loses.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "player win")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " wins. Dealer loses.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "dealer win")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " loses. Dealer Wins.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "tie")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " and Dealer tie.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "dealer bj")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+							  	 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+							 	 firstName + " loses. Dealer wins with Black Jack.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "player bj")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " wins with Black Jack. Dealer loses.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "bj tie")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " and Dealer tie with Black Jack.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "player 5 card win")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+								 "Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+								 firstName + " wins with 5 cards under 22. Dealer loses.", "Game " + gameNumber.ToString());
+			}
+
+			if (command->ToLower() == "dealer 5 card win")
+			{
+				MessageBox::Show(firstName + " has a total of: " + playerCardTotal.ToString() + ". " +
+					"Dealer has a total of: " + dealerCardTotal.ToString() + ".\n" +
+					"Dealer wins with 5 cards under 22. " + firstName + " loses.", "Game " + gameNumber.ToString());
+			}
+		}
+
+		/**************************************************************
+
+			NAME: displayGameStats
+
+			DESCRIPTION: Displays in a message box current games won, games lost, games tied. Whether
+			the player is winning, losing, or tied with dealer. The function also displays, in a second message box,
+			how often a card has been used, how many times the deck has been shuffled, and how many times different hand 
+			types have occured.
+
+			PRECONDITIONS: integer counters have been initialized
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonResults_Click
+
+			CALLS: None
+
+			**************************************************************/
+
+		void displayGameStats()
+		{
+			if (win > loss)
+			{
+				MessageBox::Show(firstName + " has won " + win.ToString() + " game(s).\n" +
+					"The Dealer has won " + loss.ToString() + " game(s).\n" + firstName + " and the Dealer tied " +
+								 tie.ToString() + " game(s).\n" + "Total Games: " + gameNumber.ToString() + "\n" +
+								 "So far " + firstName + " has won more games.", "Current Results");
+			}
+
+			else if (win < loss)
+			{
+				MessageBox::Show(firstName + " has won " + win.ToString() + " game(s).\n" +
+								 "The Dealer has won " + loss.ToString() + " game(s).\n" + firstName + " and the Dealer tied " +
+								 tie.ToString() + " game(s).\n" + "Total Games: " + gameNumber.ToString() + "\n" +
+								 "So far the Dealer has won more games.", "Current Results");
+			}
+
+			else
+			{
+				MessageBox::Show(firstName + " has won " + win.ToString() + " game(s).\n" +
+					"The Dealer has won " + loss.ToString() + " game(s).\n" + firstName + " and the Dealer tied " +
+								 tie.ToString() + " game(s).\n" + "Total Games: " + gameNumber.ToString() + "\n" +"So far " +
+								 firstName + " and the Dealer are tied.", "Current Results");
+			}
+
+			MessageBox::Show(
+				"Total times the Deck has been shuffled: " + timesShuffled.ToString() + "\n\n" +
+				"Hands under 16: " + handLessThan16.ToString() + "\n" +
+				"Hands between 16 and 20: " + handBetween16And20.ToString() + "\n" +
+				"Hands equal to 21: " + hand21.ToString() + "\n" +
+				"Hands greater than 21 : " + handGreaterThan21.ToString() + "\n\n" +
+				"Total Cards Used: " + totalCardsUsed.ToString() + "\n" +
+				"Total Aces Used: " + totalAcesUsed.ToString() + "\n" +
+				"Total Twos Used: " + totalTwosUsed.ToString() + "\n" +
+				"Total Threes Used: " + totalThreesUsed.ToString() + "\n" +
+				"Total Fours Used: " + totalFoursUsed.ToString() + "\n" +
+				"Total Fives Used: " + totalFivesUsed.ToString() + "\n" +
+				"Total Sixes Used: " + totalSixesUsed.ToString() + "\n" +
+				"Total Sevens Used: " + totalSevensUsed.ToString() + "\n" +
+				"Total Eights Used: " + totalEightsUsed.ToString() + "\n" +
+				"Total Nines Used: " + totalNinesUsed.ToString() + "\n" +
+				"Total Tens Used: " + totalTensUsed.ToString() + "\n" +
+				"Total Jacks Used: " + totalJacksUsed.ToString() + "\n" +
+				"Total Queen Used: " + totalQueensUsed.ToString() + "\n" +
+				"Total Kings Used: " + totalKingsUsed.ToString(), "Shuffling, Hand, & Card Totals");
+		}
+
+		/**************************************************************
+
+			NAME: getCardValue
+
+			DESCRIPTION: returns the integer value of a given card based
+			on the game of Black Jack.
+
+			PRECONDITIONS: the function requires a valid card.
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
 
 		int getCardValue(Cards card)
 		{
@@ -840,223 +1961,232 @@ namespace Program2 {
 			}
 		}
 
+		/**************************************************************
+
+			NAME: initializePointArrays
+
+			DESCRIPTION: sets the values of the point arrays dealerCardPositions and playercardPositions
+
+			PRECONDITIONS: the arrays have been intialized.
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: MyForm_Load
+
+			CALLS: None
+
+			**************************************************************/
+
 		void initializePointArrays()
 		{
 			dealerCardPositions = gcnew array<Point> { Point(573, 112), Point(703, 112), Point(833, 112), Point(631, 333), Point(761, 333) };
 			playerCardPositions = gcnew array<Point> { Point(50, 112), Point(180, 112), Point(310, 112), Point(108, 333), Point(238, 333) };
 		}
 
+		/**************************************************************
+
+			NAME: quit
+
+			DESCRIPTION: displays a farewell message and image, plays music, and closes the program.
+
+			PRECONDITIONS: None
+
+			POSTCONDITIONS: see description
+
+			CALLED BY: buttonQuit_Click, cleanup
+
+			CALLS: displayFarewellMessage
+
+			**************************************************************/
+
+		void quit()
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
+			Image^ exitImage = Image::FromFile("..//Media/Images/FMA_everyone.jpg");
+			Media::SoundPlayer^ sndPlayer = gcnew Media::SoundPlayer("..//Media/Music/Fukuhara Miho - LET IT OUT (TV Size).wav");
+
+			////////////////////////////////////////////////////////////////////
+
+			pictureBoxAlignment->Image = exitImage;
+			pictureBoxAlignment->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			pictureBoxAlignment->BringToFront();
+			pictureBoxAlignment->Visible = true;
+
+			sndPlayer->Play();
+			displayFarewellMessage();
+			Close();
+		}
+
+		/**************************************************************
+
+			NAME: shuffleDeck
+
+			DESCRIPTION: simulates a shuffled deck of 52 playing cards
+
+			PRECONDITIONS: None
+
+			POSTCONDITIONS: See description
+
+			CALLED BY: buttonHit_Click, buttonPlay_Click, buttonStay_Click
+
+			CALLS: None
+
+			**************************************************************/
+
 		void shuffleDeck()
 		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
 			Cards nextCard = Cards::cA;
 			ArrayList sortedDeck;
 			Random^ seedGenerator = gcnew Random();
 			int index, seed = seedGenerator->Next();
 			Random^ shuffler = gcnew Random(seed);
 
+			////////////////////////////////////////////////////////////////////
+
 
 			while (sortedDeck.Count < 52)
 			{
-				try
-				{
 					sortedDeck.Add(nextCard);
 					nextCard++;
-				}
-				catch (Exception^ e)
-				{
-					debug.Add(sortedDeck.Count);
-					MessageBox::Show("Error:" + e);
-					MessageBox::Show("error at line 596" + debug[0]);
-				}
 			}
 
 			for (int i = 51; i > -1; i--)
 			{
-				try
-				{
 					index = shuffler->Next(i);
 					deck.Add(sortedDeck[index]);
 					sortedDeck.RemoveAt(index);
-				}
-				catch (Exception^ e)
-				{
-					MessageBox::Show("Error:" + e);
-					MessageBox::Show("error at line 611");
-				}
 			}
+
+			timesShuffled++;
 		}
 
-		private: System::Void timerDateTime_Tick(System::Object^  sender, System::EventArgs^  e) 
-	{
-				 labelDateTime->Text = DateTime::Now.ToString();
-	}
+		/**************************************************************
 
-		private: System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e) 
-{
-			 initializePointArrays();
-			 labelDateTime->Visible = true;
-			 pictureBoxCardAnimation1->Visible = true;
-			 pictureBoxCardAnimation2->Visible = true;
-}
+			NAME: updateBank
 
-		private: System::Void timerCardAnimation_Tick(System::Object^  sender, System::EventArgs^  e) 
-{
-			static int upCounter = 39, downCounter = 38;
+			DESCRIPTION: calculates current bank roll and displays it in a label.
 
-			pictureBoxCardAnimation1->Image = imageListCards->Images[upCounter];
-			pictureBoxCardAnimation2->Image = imageListCards->Images[downCounter];
+			PRECONDITIONS: integer counter bank is initialized.
 
-			upCounter++;
-			downCounter--;
+			POSTCONDITIONS: see description
 
-			if (upCounter > 51)
-			{
-				upCounter = 39;
-			}
+			CALLED BY: buttonPlay_Click, cleanup
 
-			if (downCounter < 26)
-			{
-				downCounter = 38;
-			}
-}
+			CALLS: None
 
-		private: System::Void buttonLogin_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		username = textBoxLogin->Text;
+			**************************************************************/
 
-		if (username->Trim() != "")
+		void updateBank()
 		{
-			if (username->IndexOf(" ") > 0)
+			if (playerWin && playerBlackJack)
 			{
-				firstName = username->Substring(0, username->IndexOf(" "));
+				bank += 30;
+				labelBank->Text = "Bank: $" + bank.ToString();
 			}
 
-			else
+			else if (playerWin)
 			{
-				firstName = username;
+				bank += 20;
+				labelBank->Text = "Bank: $" + bank.ToString();
 			}
-			buttonLogin->Visible = false;
+			else if (tied)
+			{
+				bank += 10;
+				labelBank->Text = "Bank: $" + bank.ToString();
+			}
+			else if (!bet)
+			{
+				bank -= 10;
+				labelBank->Text = "Bank: $" + bank.ToString();
+				bet = true;
+			}
 
-			labelDescription->Visible = false;
+			if (bank == 0 && bet)
+			{
+				bankrupt = true;
+			}
 
-			pictureBoxCardAnimation1->Visible = false;
-			pictureBoxCardAnimation2->Visible = false;
-			pictureBoxGif->Visible = false;
-
-			textBoxLogin->Visible = false;
-
-			timerCardAnimation->Enabled = false;
-
-			labelDescription->Text = "Thank you, " + username + ", for joining us today!";
-
-			labelDescription->Location = Point(504 - (labelDescription->Width / 2), 49);
-
-			labelDescription->Visible = true;
-
-			buttonPlay->BringToFront();
-			buttonPlay->Visible = true;
+			labelBank->BringToFront();
+			labelBank->Visible = true;
 		}
 
-		else
+		////////////////////////////////////////////////////////////////////
+		//
+		//				END CUSTOM DEFINED FUNCTIONS
+		//
+		////////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////////////////
+		//
+		//				START EVENT DRIVEN FUNCTIONS
+		//
+		////////////////////////////////////////////////////////////////////
+
+
+		/**************************************************************
+
+			NAME: buttonCredits_Click
+
+			DESCRIPTION: displays credits on button press
+
+		**************************************************************/
+
+		private: System::Void buttonCredits_Click(System::Object^  sender, System::EventArgs^  e)
 		{
-			MessageBox::Show("Please enter a username to log in!", "Error");
+			credits();
 		}
-}
 
-		private: System::Void buttonPlay_Click(System::Object^  sender, System::EventArgs^  e) 
-			{
-				////////////////////////////////////////////////////////////////////
-				//
-				//				DECLARE LOCAL VARIABLES/OBJECTS
-				//
-				////////////////////////////////////////////////////////////////////
+		 /**************************************************************
 
-				int playerCardValue, dealerCardValue;
+			NAME: buttonHelp_Click
 
-				////////////////////////////////////////////////////////////////////
+			DESCRIPTION: displays help on button press
 
-				buttonHit->Visible = true;
-				buttonStay->Visible = true;
-				buttonPlay->Visible = false;
+		**************************************************************/
+
+		private: System::Void buttonHelp_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+			StreamReader^ sr;
+			String^ message;
+
+			////////////////////////////////////////////////////////////////////
 
 
 
-				if (deck.Count < 4)
-				{
-					shuffleDeck();
-				}
+			sr = gcnew StreamReader("..//Farewell/BJ_Manual.txt");
+			message = sr->ReadToEnd();
+			sr->Close();
 
-				for (int i = 0; i < 2; i ++)
-				{
-					cardsDealtToPlayer[i] = dealCard();
-					cardsDealtToDealer[i] = dealCard();
+			MessageBox::Show(message, "How to Play");
+		}
 
-					playerCardValue = getCardValue(cardsDealtToPlayer[i]);
-					dealerCardValue = getCardValue(cardsDealtToDealer[i]);
+		/**************************************************************
 
-					displayCardandValue(cardsDealtToPlayer[i], i, playerCardValue, playerCardPositions[i], true);
-					displayCardandValue(cardsDealtToDealer[i], i, dealerCardValue, dealerCardPositions[i], false);
+			NAME: buttonHit_Click
 
-					if (dealerHasAce() && cardAce(cardsDealtToDealer[i]))
-					{
-						dealerCardValue = 1;
-						dealerCardLabels[i]->Text = "Card Value: 1";
-					}
+			DESCRIPTION: gives player another card in the game of black jack
+			and determines if the player has busted.
 
-					playerCardsInHand++;
-					dealerCardsInHand++;
+		**************************************************************/
 
-					playerCardTotal += playerCardValue;
-					dealerCardTotal += dealerCardValue;
-				}
-
-				
-				displayCardTotal(true);
-				displayCardTotal(false);
-
-				if (blackJack(playerCardTotal) && blackJack(dealerCardTotal))
-				{
-					MessageBox::Show("BlackJack Tie", "BlackJack Tie...");
-					cleanup(playerCardsInHand, dealerCardsInHand);
-				}
-
-				else if (blackJack(playerCardTotal))
-				{
-					MessageBox::Show("Player BlackJack!", "Player BlackJack");
-					cleanup(playerCardsInHand, dealerCardsInHand);
-				}
-
-				else if (blackJack(dealerCardTotal))
-				{
-					MessageBox::Show("Dealer BlackJack...", "Dealer BlackJack...");
-					cleanup(playerCardsInHand, dealerCardsInHand);
-				}
-				
-				for (int i = 0; i < playerCardsInHand; i++)
-				{
-					if (cardAce(cardsDealtToPlayer[i]))
-						{
-							if (changeValueAce(i) == 1)
-							{
-								playerCardTotal -= 10;
-								displayCardTotal(true);
-								displayCardandValue(cardsDealtToPlayer[i], i, playerCardValue, playerCardPositions[i], true);
-							}
-						}
-				}
-				
-
-				if (bust(playerCardTotal))
-				{
-					MessageBox::Show("Bust Message", "Busted!");
-					cleanup(playerCardsInHand, dealerCardsInHand);
-
-				}
-
-			}
-
-		private: System::Void buttonHit_Click(System::Object^  sender, System::EventArgs^  e) 
-{
+		private: System::Void buttonHit_Click(System::Object^  sender, System::EventArgs^  e)
+		{
 			////////////////////////////////////////////////////////////////////
 			//
 			//				DECLARE LOCAL VARIABLES/OBJECTS
@@ -1094,17 +2224,288 @@ namespace Program2 {
 
 			if (bust(playerCardTotal))
 			{
-				MessageBox::Show("Player Bust Message", "Busted!");
+				displayGameResults("player bust");
 				cleanup(playerCardsInHand, dealerCardsInHand);
-				
+				loss++;
+
 			}
 
-			if (playerCardTotal == 5)
+			if (playerCardsInHand == 5)
 			{
-				MessageBox::Show("Player 5 Card under 22 Win!", "5 Card Win!");
+				displayGameResults("player 5 card win");
+				playerWin = true;
 				cleanup(playerCardsInHand, dealerCardsInHand);
+				win++;
+
 			}
+		}
+
+		/**************************************************************
+
+			NAME: buttonLogin_Click
+
+			DESCRIPTION: allows a user to log in using a username of their choice, displays a welcome message to the user,
+			and prepares the program to start playing Black Jack
+
+		**************************************************************/
+
+		private: System::Void buttonLogin_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		username = textBoxLogin->Text;
+
+		if (username->Trim() != "")
+		{
+			if (username->IndexOf(" ") > 0)
+			{
+				firstName = username->Substring(0, username->IndexOf(" "));
+			}
+
+			else
+			{
+				firstName = username;
+			}
+
+			if (firstName->ToLower() == "admin")
+			{
+				debugMode = true;
+				comboBoxCheat->Enabled = true;
+				comboBoxCheat->Visible = true;
+			}
+			buttonLogin->Visible = false;
+
+			labelDescription->Visible = false;
+
+			pictureBoxCardAnimation1->Visible = false;
+			pictureBoxCardAnimation2->Visible = false;
+			pictureBoxGif->Visible = false;
+
+			textBoxLogin->Visible = false;
+
+			timerCardAnimation->Enabled = false;
+
+			labelDescription->Text = "Thank you, " + username + ", for joining us today!";
+
+			labelDescription->Location = Point(504 - (labelDescription->Width / 2), 49);
+
+			labelDescription->Visible = true;
+
+			labelBank->Visible = true;
+
+			buttonPlay->BringToFront();
+			buttonPlay->Visible = true;
+
+			buttonResults->BringToFront();
+			buttonResults->Visible = true;
+		}
+
+		else
+		{
+			MessageBox::Show("Please enter a username to log in!", "Error");
+		}
 }
+
+		/**************************************************************
+
+			NAME: buttonQuit_Click
+
+			DESCRIPTION: displays a farewell message, plays music, and exits the program
+
+		**************************************************************/
+
+		private: System::Void buttonQuit_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
+			Windows::Forms::DialogResult buttonClicked;
+
+
+			////////////////////////////////////////////////////////////////////
+
+			if (playingGame == true)
+			{
+				buttonClicked = MessageBox::Show("You're in the middle of a game. Do you really want to quit?\n(It will count as a loss)",
+					"Game in Progress",
+					MessageBoxButtons::YesNo,
+					MessageBoxIcon::Question,
+					MessageBoxDefaultButton::Button2);
+
+				if (buttonClicked == Windows::Forms::DialogResult::Yes)
+				{
+					loss++;
+					quit();
+
+				}
+			}
+			else
+			{
+				quit();
+				Close();
+			}
+
+		}
+
+		/**************************************************************
+
+			NAME: buttonPlay_Click
+
+			DESCRIPTION: deals cards to player and dealer and determines if anyone has won or lost the game
+			of Black Jack.
+
+		**************************************************************/
+
+		private: System::Void buttonPlay_Click(System::Object^  sender, System::EventArgs^  e) 
+			{
+				////////////////////////////////////////////////////////////////////
+				//
+				//				DECLARE LOCAL VARIABLES/OBJECTS
+				//
+				////////////////////////////////////////////////////////////////////
+
+				int playerCardValue, dealerCardValue;
+
+				////////////////////////////////////////////////////////////////////
+
+				buttonHit->Visible = true;
+				buttonStay->Visible = true;
+				buttonPlay->Visible = false;
+
+				playingGame = true;
+
+				gameNumber++;
+
+				labelGameNumber->Text = "Game " + gameNumber;
+				labelGameNumber->Visible = true;
+
+
+
+				if (debugMode)
+				{
+					debugDecks();
+
+					comboBoxCheat->Visible = false;
+
+					if (bank == 10)
+					{
+						bank += 1000;
+					}
+				}
+
+				updateBank();
+
+				if (deck.Count < 4)
+				{
+					shuffleDeck();
+				}
+
+				for (int i = 0; i < 2; i ++)
+				{
+					cardsDealtToPlayer[i] = dealCard();
+					cardsDealtToDealer[i] = dealCard();
+
+					playerCardValue = getCardValue(cardsDealtToPlayer[i]);
+					dealerCardValue = getCardValue(cardsDealtToDealer[i]);
+
+					displayCardandValue(cardsDealtToPlayer[i], i, playerCardValue, playerCardPositions[i], true);
+					displayCardandValue(cardsDealtToDealer[i], i, dealerCardValue, dealerCardPositions[i], false);
+
+					if (cardAce(cardsDealtToDealer[i]))
+					{
+						dealerCardValue = dealerAceChange(dealerCardTotal);
+
+						if (dealerCardValue == 1)
+						{
+							dealerCardLabels[i]->Text = "Card Value: 1";
+						}
+						
+					}
+
+					playerCardsInHand++;
+					dealerCardsInHand++;
+
+					playerCardTotal += playerCardValue;
+					dealerCardTotal += dealerCardValue;
+				}
+
+				
+				displayCardTotal(true);
+				displayCardTotal(false);
+
+				if (blackJack(playerCardTotal) && blackJack(dealerCardTotal))
+				{
+					displayGameResults("bj tie");
+					tied = true;
+					cleanup(playerCardsInHand, dealerCardsInHand);
+					tie++;
+					
+				}
+
+				else if (blackJack(playerCardTotal))
+				{
+					displayGameResults("player bj");
+					playerWin = true;
+					playerBlackJack = true;
+					cleanup(playerCardsInHand, dealerCardsInHand);
+					win++;
+					
+				}
+
+				else if (blackJack(dealerCardTotal))
+				{
+					displayGameResults("dealer bj");
+					cleanup(playerCardsInHand, dealerCardsInHand);
+					loss++;
+				}
+				
+				for (int i = 0; i < playerCardsInHand; i++)
+				{
+					if (cardAce(cardsDealtToPlayer[i]))
+						{
+							if (changeValueAce(i) == 1)
+							{
+								playerCardTotal -= 10;
+								displayCardTotal(true);
+
+								playerCardLabels[i]->Text = "Card Value: 1";
+								//displayCardandValue(cardsDealtToPlayer[i], i, 1, playerCardPositions[i], true);
+							}
+						}
+				}
+				
+
+				if (bust(playerCardTotal))
+				{
+					displayGameResults("player bust");
+					cleanup(playerCardsInHand, dealerCardsInHand);
+					loss++;
+				}
+
+			}
+
+		/**************************************************************
+
+			NAME: buttonResults_Click
+
+			DESCRIPTION: displays statistics of the games of black jack
+
+		**************************************************************/
+
+		private: System::Void buttonResults_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			displayGameStats();
+		}
+		
+		/**************************************************************
+
+			NAME: buttonStay_Click
+
+			DESCRIPTION: allows dealer to take their turn of hitting, determines if the dealer busts,
+			determines who won this game of Black Jack.
+
+		**************************************************************/
 
 		private: System::Void buttonStay_Click(System::Object^  sender, System::EventArgs^  e) 
 {
@@ -1118,26 +2519,31 @@ namespace Program2 {
 
 			////////////////////////////////////////////////////////////////////
 
-			while (dealerHit(dealerCardTotal))
+			while (dealerHit(dealerCardTotal) && dealerCardsInHand < 5)
 			{
 				if (deck.Count == 0)
 				{
 					shuffleDeck();
 				}
+				displayDealerStrategy();
+				labelDescription->Location = Point(504 - (labelDescription->Width / 2), 49);
 
 				cardsDealtToDealer[dealerCardsInHand] = dealCard();
-
-				for (int i = 0; i < dealerCardsInHand; i++)
-				{
-					if (dealerHasAce() && cardAce(cardsDealtToDealer[i]))
-					{
-						dealerCardValue = 1;
-					}
-				}
 
 				dealerCardValue = getCardValue(cardsDealtToDealer[dealerCardsInHand]);
 
 				displayCardandValue(cardsDealtToDealer[dealerCardsInHand], dealerCardsInHand, dealerCardValue, dealerCardPositions[dealerCardsInHand], false);
+
+				if (cardAce(cardsDealtToDealer[dealerCardsInHand]))
+				{
+					dealerCardValue = dealerAceChange(dealerCardTotal);
+
+					if (dealerCardValue == 1)
+					{
+						dealerCardLabels[dealerCardsInHand]->Text = "Card Value: 1";
+					}
+
+				}
 
 				dealerCardsInHand++;
 
@@ -1146,29 +2552,52 @@ namespace Program2 {
 				displayCardTotal(false);
 			}
 
+			if (dealerCardTotal < 22 && dealerCardsInHand != 5)
+			{
+				displayDealerStrategy();
+			}
+
 			if (bust(dealerCardTotal))
 			{
-				MessageBox::Show("Dealer Bust Message", "Busted!");
+				displayGameResults("dealer bust");
+				playerWin = true;
 				cleanup(playerCardsInHand, dealerCardsInHand);
+				win++;
+				
 
+			}
+
+			else if (dealerCardsInHand == 5)
+			{
+				displayGameResults("dealer 5 card win");
+				cleanup(playerCardsInHand, dealerCardsInHand);
+				loss++;
 			}
 
 			else if (dealerCardTotal > playerCardTotal)
 			{
-				MessageBox::Show("Dealer Win Message", "Dealer Wins!");
+				displayGameResults("dealer win");
 				cleanup(playerCardsInHand, dealerCardsInHand);
+				loss++;
 			}
 
 			else if (playerCardTotal > dealerCardTotal)
 			{
-				MessageBox::Show("Player Win Message", "Player Wins!");
+				displayGameResults("player win");
+				playerWin = true;
 				cleanup(playerCardsInHand, dealerCardsInHand);
+				win++;
+				
 			}
 
 			else if (playerCardTotal == dealerCardTotal)
 			{
-				MessageBox::Show("Player & Dealer Tie", "Tie!");
+				displayGameResults("tie");
+				tied = true;
+
 				cleanup(playerCardsInHand, dealerCardsInHand);
+				tie++;
+				
 			}
 
 			else
@@ -1177,5 +2606,90 @@ namespace Program2 {
 				cleanup(playerCardsInHand, dealerCardsInHand);
 			}
 }
+
+		/**************************************************************
+
+			NAME: MyForm_Load
+
+			DESCRIPTION: displays picture boxes, initializes arrays, displays a label, and plays music.
+
+		**************************************************************/
+
+		private: System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e)
+		{
+			////////////////////////////////////////////////////////////////////
+			//
+			//				DECLARE LOCAL VARIABLES/OBJECTS
+			//
+			////////////////////////////////////////////////////////////////////
+
+			Media::SoundPlayer^ sndPlayer = gcnew Media::SoundPlayer("..//Media/Music/Senju Akira - Lapis Philosophorum ~Chant~.wav");
+
+			////////////////////////////////////////////////////////////////////
+
+			initializePointArrays();
+			labelDateTime->Visible = true;
+			pictureBoxCardAnimation1->Visible = true;
+			pictureBoxCardAnimation2->Visible = true;
+
+			sndPlayer->PlayLooping();
+		}
+
+		/**************************************************************
+
+			NAME: timerCardAnimation_Tick
+
+			DESCRIPTION: updates images in two pictures boxes with different card images
+
+		**************************************************************/
+
+		private: System::Void timerCardAnimation_Tick(System::Object^  sender, System::EventArgs^  e)
+		{
+			static int upCounter = 39, downCounter = 38;
+
+
+				pictureBoxCardAnimation1->Image = imageListCards->Images[upCounter];
+				pictureBoxCardAnimation2->Image = imageListCards->Images[downCounter];
+
+				upCounter++;
+				downCounter--;
+
+				if (upCounter > 51)
+				{
+					upCounter = 39;
+				}
+
+				if (downCounter < 26)
+				{
+					downCounter = 38;
+				}
+
+
+			/*if (timerCardAnimation->Interval == 1000)
+			{
+			counter++;
+			}*/
+		}
+
+		/**************************************************************
+
+			NAME: timerDateTime_Tick
+
+			DESCRIPTION: updates a label with the current date and time
+
+		**************************************************************/
+
+
+		private: System::Void timerDateTime_Tick(System::Object^  sender, System::EventArgs^  e)
+		{
+			labelDateTime->Text = DateTime::Now.ToString();
+		}
+
+			////////////////////////////////////////////////////////////////////
+			//
+			//				END EVENT DRIVEN FUNCTIONS
+			//
+			///////////////////////////////////////////////////////////////////
+
 };
 }

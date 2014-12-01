@@ -1,0 +1,22 @@
+Date		ST		ET		TT
+11/08		10AM		3PM		5hrs
+11/09		10AM		3PM		5hrs
+11/10		1PM		5PM		4hrs
+11/11		1PM		6PM		5hrs
+11/13		10AM		11AM		1hr
+11/14		10AM		11AM		1hr
+11/17		1PM		5PM		4hrs
+11/18		1PM		6PM		5hrs
+11/29		10AM		3PM		5hrs
+11/30		10AM		3PM		5hrs
+
+				          Total: 40hrs
+
+
+
+
+Validity Statements
+blackJack
+bust
+cardAce
+dealerHit
